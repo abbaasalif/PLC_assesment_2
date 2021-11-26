@@ -1,6 +1,3 @@
-if(b==c){
-
-}
-else{
+void main (){
     
 }

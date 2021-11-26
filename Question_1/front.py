@@ -6,7 +6,7 @@ float_val1 = '\.\d+'
 octal = '[0][0-7]{1,2}'
 hexadecimal = '[0][x][0-9a-fA-f]{1,2}'
 operations = {'=':'assign_op', '+':'add_op', '-':'sub_op', '*':'mul_op', '/':'div_op', '%':'mod_op', '\'':'single_quotes', '"':'double_quotes', '(':'left_paranthesis',')':'right_paranthesis', ';':'delimiter','{':'left_curly','}':'right_curly', '>':"GREATER_THAN", '<':"LESS_THAN", "!":"EXCLAMATION"}
-keywords = {'auto':'AUTO_CODE','const':'CONST_CODE','double':'DOUBLE_CODE','float':'FLOAT_CODE','int':"INT_CODE",'short':'SHORT_CODE','struct':'STRUCT_CODE','unsigned':'UNSIGNED_CODE','break':"BREAK_CODE",'continue':'CONTINUE_CODE','else':'ELSE_CODE','for':'FOR_CODE','long':'LONG_CODE','signed':'SIGNED_CODE','switch':'SWITCH_CODE','void':'VOID_CODE','case':'CASE_CODE','default':'DEFAULT_CODE','enum':"ENUM_CODE",'goto':'GOTO_CODE','register':'REGISTER_CODE','sizeof':'SIZEOF_CODE','typedef':'TYPEDEF_CODE','volatile':'VOLATILE_CODE','char':'CHAR_CODE','do':'DO_CODE','extern':"EXTERN_CODE",'if':'IF_CODE','return':'RETURN_CODE','static':'STATIC_CODE','union':'UNION_CODE','while':'WHILE_CODE'}
+keywords = {'auto':'AUTO_CODE','const':'CONST_CODE','double':'DOUBLE_CODE','float':'FLOAT_CODE','int':"INT_CODE",'short':'SHORT_CODE','struct':'STRUCT_CODE','unsigned':'UNSIGNED_CODE','break':"BREAK_CODE",'continue':'CONTINUE_CODE','else':'ELSE_CODE','for':'FOR_CODE','long':'LONG_CODE','signed':'SIGNED_CODE','switch':'SWITCH_CODE','void':'VOID_CODE','case':'CASE_CODE','default':'DEFAULT_CODE','enum':"ENUM_CODE",'goto':'GOTO_CODE','register':'REGISTER_CODE','sizeof':'SIZEOF_CODE','typedef':'TYPEDEF_CODE','volatile':'VOLATILE_CODE','char':'CHAR_CODE','do':'DO_CODE','extern':"EXTERN_CODE",'if':'IF_CODE','return':'RETURN_CODE','static':'STATIC_CODE','union':'UNION_CODE','while':'WHILE_CODE', 'main':'MAIN_CODE'}
 delimiter = ';'
 parsed_array = []
 val_temp=''
@@ -145,17 +145,18 @@ def stmt():
     if nextToken == 'left_curly':
         print("Start <block>")
         lex()
-        while nextToken != 'right_curly' :
+        while nextToken != 'right_curly' and nextToken != None:
             
             stmt()
+        if nextToken == None:
+            error()
         if nextToken == 'right_curly':
             print("End <block>")
             
         else:
             error()
     
-def error():
-    print("You messed up. You are not worthy!!!!")
+
 
 def expr():
     print("Enter <expr>")
@@ -208,6 +209,7 @@ def bool_expr():
 
 def error():
     print("You messed up. You are not worthy!!")
+    exit()
 
 
 
@@ -277,9 +279,30 @@ def while_stmt():
                 stmt()
     print("Exit <while statement>")
 
+def program():
+    print('Enter <Program>')
+    lex()
+    if nextToken != 'VOID_CODE':
+        error()
+    else:
+        lex()
+        if nextToken != 'MAIN_CODE':
+            error()
+        else:
+            lex()
+            if nextToken != 'left_paranthesis':
+                error()
+            else:
+                lex()
+                if nextToken != 'right_paranthesis':
+                  error()
+                else:
+                    stmt()
+    print('Exit <Program>')                 
 
+        
 
 
     
 
-stmt()
+program()
