@@ -1,5 +1,9 @@
 void main (){
-    int a = 10;
+    int a;
+    int b;
+    do{
+
+    }while(a==b);
 }
     
 

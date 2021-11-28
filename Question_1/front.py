@@ -5,8 +5,8 @@ float_val = '\d+\.\d*'
 float_val1 = '\.\d+'
 octal = '[0][0-7]{1,2}'
 hexadecimal = '[0][x][0-9a-fA-f]{1,2}'
-operations = {'=':'assign_op', '+':'add_op', '-':'sub_op', '*':'mul_op', '/':'div_op', '%':'mod_op', '\'':'single_quotes', '"':'double_quotes', '(':'left_paranthesis',')':'right_paranthesis', ';':'delimiter','{':'left_curly','}':'right_curly', '>':"GREATER_THAN", '<':"LESS_THAN", "!":"EXCLAMATION"}
-keywords = {'auto':'AUTO_CODE','const':'CONST_CODE','double':'DOUBLE_CODE','float':'FLOAT_CODE','int':"INT_CODE",'short':'SHORT_CODE','struct':'STRUCT_CODE','unsigned':'UNSIGNED_CODE','break':"BREAK_CODE",'continue':'CONTINUE_CODE','else':'ELSE_CODE','for':'FOR_CODE','long':'LONG_CODE','signed':'SIGNED_CODE','switch':'SWITCH_CODE','void':'VOID_CODE','case':'CASE_CODE','default':'DEFAULT_CODE','enum':"ENUM_CODE",'goto':'GOTO_CODE','register':'REGISTER_CODE','sizeof':'SIZEOF_CODE','typedef':'TYPEDEF_CODE','volatile':'VOLATILE_CODE','char':'CHAR_CODE','do':'DO_CODE','extern':"EXTERN_CODE",'if':'IF_CODE','return':'RETURN_CODE','static':'STATIC_CODE','union':'UNION_CODE','while':'WHILE_CODE', 'main':'MAIN_CODE'}
+operations = {'=':'assign_op', '+':'add_op', '-':'sub_op', '*':'mul_op', '/':'div_op', '%':'mod_op', '\'':'single_quotes', '"':'double_quotes', '(':'left_paranthesis',')':'right_paranthesis', ';':'delimiter','{':'left_curly','}':'right_curly', '>':"GREATER_THAN", '<':"LESS_THAN", "!":"EXCLAMATION", ":":"EACH"}
+keywords = {'auto':'AUTO_CODE','const':'CONST_CODE','double':'DOUBLE_CODE','float':'FLOAT_CODE','int':"INT_CODE",'short':'SHORT_CODE','struct':'STRUCT_CODE','unsigned':'UNSIGNED_CODE','break':"BREAK_CODE",'continue':'CONTINUE_CODE','else':'ELSE_CODE','for':'FOR_CODE','long':'LONG_CODE','signed':'SIGNED_CODE','switch':'SWITCH_CODE','void':'VOID_CODE','case':'CASE_CODE','default':'DEFAULT_CODE','enum':"ENUM_CODE",'goto':'GOTO_CODE','register':'REGISTER_CODE','sizeof':'SIZEOF_CODE','typedef':'TYPEDEF_CODE','volatile':'VOLATILE_CODE','char':'CHAR_CODE','do':'DO_CODE','extern':"EXTERN_CODE",'if':'IF_CODE','return':'RETURN_CODE','static':'STATIC_CODE','union':'UNION_CODE','while':'WHILE_CODE', 'main':'MAIN_CODE', 'forEach':'FOREACH_CODE'}
 delimiter = ';'
 parsed_array = []
 val_temp=''
@@ -143,7 +143,13 @@ def stmt():
         for_stmt()
     elif nextToken == 'IF_CODE':
         if_stmt()
-
+    elif nextToken == 'RETURN_CODE':
+        return_stmt()
+    elif nextToken == 'FOREACH_CODE':
+        forEach_stmt()
+    elif nextToken == 'DO_CODE':
+        do_while_stmt()
+    lex()
 def block():
     print("Start <block>")
     lex()
@@ -156,7 +162,7 @@ def block():
         while nextToken != 'right_curly':
             stmt()
         if nextToken == 'right_curly':
-            print("END <block>")
+            print("End <block>")
         
  
 def assignment_stmt():
@@ -177,7 +183,7 @@ def assignment_stmt():
         #     lex()
         if nextToken != 'delimiter':
             error()
-        print('END <assignement statement>')
+        print('End <assignement statement>')
         # else:
         #     error()
     elif nextToken == 'IDENTIFIER':
@@ -189,7 +195,7 @@ def assignment_stmt():
             lex()
             if nextToken != 'delimiter':
                 error()
-            print('END <assignement statement>')
+            print('End <assignement statement>')
         else:
             error()
 
@@ -241,7 +247,7 @@ def bool_expr():
         expr()
     else:
         error()
-    print("EXIT <bool_expr>")
+    print("End <bool_expr>")
     
 
 
@@ -252,7 +258,7 @@ def error():
 
 
 def if_stmt():
-    print("ENTER <IF STMT>")
+    print("Enter <IF STMT>")
     if (nextToken != 'IF_CODE'):
         error()
     else:
@@ -271,7 +277,7 @@ def if_stmt():
                     print("ENTER <ELSE STMT>")
                     block()
                     print("EXIT <ELSE STMT>")
-    print("EXIT <IF STMT>")
+    print("End <IF STMT>")
 def for_stmt():
     print("Enter <FOR STATMENT>")
     if nextToken != 'FOR_CODE':
@@ -294,7 +300,28 @@ def for_stmt():
         error()
     block()
     print("End <for statement>") 
-
+def forEach_stmt():
+    print("Enter <forEach statement>")
+    if nextToken != "FOREACH_CODE":
+        error()
+    lex()
+    if nextToken != 'left_paranthesis':
+        error()
+    lex()
+    if nextToken != 'IDENTIFIER':
+        error()
+    lex()
+    if nextToken != 'EACH':
+        error()
+    lex()
+    if nextToken != 'IDENTIFIER':
+        error()
+    lex()
+    if nextToken != 'right_paranthesis':
+        error()
+    else:
+        block()
+    print('End <forEach statement>')
 def while_stmt():
     print('Enter <while statement>')
     if nextToken != 'WHILE_CODE':
@@ -310,7 +337,7 @@ def while_stmt():
                 error()
             else:
                 block()
-    print("Exit <while statement>")
+    print("End <while statement>")
 def switch_stmt():
     print('Enter <switch statement>')
     if nextToken != 'SWITCH_CODE':
@@ -331,16 +358,35 @@ def switch_stmt():
         else:
             if nextToken != 'right_curly':
                 error()
-        print('END <switch statement>')
+        print('End <switch statement>')
 def return_stmt():
     print("Enter <Return statement>")
     if nextToken != 'RETURN_CODE':
         error()
     lex()
     expr()
-    print('END <return statement>')
+    print('End <return statement>')
+def do_while_stmt():
+    print('Enter <Do While Statement>')
+    if nextToken != 'DO_CODE':
+        error()
+    block()
+    lex()
+    if nextToken != "WHILE_CODE":
+        error()
+    lex()
+    if nextToken != "left_paranthesis":
+        error()
+    lex()
+    bool_expr()
+    if nextToken != 'right_paranthesis':
+        error()
+    lex()
+    if nextToken != 'delimiter':
+        error()
+    print("End <Do While Statement>")
 def program():
-    print('Enter <Program>')
+    print('START <Program>')
     lex()
     if nextToken != 'VOID_CODE':
         error()
@@ -357,10 +403,5 @@ def program():
         block()
     print('END <Program>')                 
 
-        
-
-
-    
-
+#starts cheking the syntax of the program        
 program()
-print(parsed_array)
