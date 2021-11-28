@@ -135,28 +135,66 @@ def lex():
         nextToken = None
 
 def stmt():
-    lex()
-    if nextToken == 'WHILE_CODE':
+    if nextToken == 'INT_CODE' or nextToken == 'FLOAT_CODE' or nextToken == 'DOUBLE_CODE' or nextToken=='IDENTIFIER':
+        assignment_stmt()
+    elif nextToken == 'WHILE_CODE':
         while_stmt()
     elif nextToken == 'FOR_CODE':
         for_stmt()
     elif nextToken == 'IF_CODE':
         if_stmt()
-    if nextToken == 'left_curly':
-        print("Start <block>")
-        lex()
-        while nextToken != 'right_curly' and nextToken != None:
-            
+
+def block():
+    print("Start <block>")
+    lex()
+    if nextToken != 'left_curly':
+        error()
+    lex()
+    if nextToken == 'right_curly':
+        print("END <block>")
+    else:
+        while nextToken != 'right_curly':
             stmt()
-        if nextToken == None:
-            error()
         if nextToken == 'right_curly':
-            print("End <block>")
-            
+            print("END <block>")
+        
+ 
+def assignment_stmt():
+    print('Enter <assign statement>')
+    if nextToken == 'INT_CODE' or nextToken == 'FLOAT_CODE' or nextToken=='DOUBLE_CODE':
+        lex()
+        if nextToken != 'IDENTIFIER':
+            error()
+        lex()
+        if nextToken == 'delimiter':
+            print('END <assignment statement>')
+            return
+        if nextToken != 'assign_op':
+            error()
+        lex()
+        expr()
+        # if nextToken == 'IDENTIFIER' or nextToken == 'INTEGER' or nextToken == 'FLOAT': 
+        #     lex()
+        if nextToken != 'delimiter':
+            error()
+        print('END <assignement statement>')
+        # else:
+        #     error()
+    elif nextToken == 'IDENTIFIER':
+        lex()
+        if nextToken != 'assign_op':
+            error()
+        lex()
+        if nextToken == 'IDENTIFIER' or nextToken == 'INTEGER' or nextToken == 'FLOAT': 
+            lex()
+            if nextToken != 'delimiter':
+                error()
+            print('END <assignement statement>')
         else:
             error()
-    
 
+    else:
+        error()
 
 def expr():
     print("Enter <expr>")
@@ -227,15 +265,12 @@ def if_stmt():
             if nextToken != 'right_paranthesis':
                 error()
             else:
-                stmt()
+                block()
                 lex()
                 if nextToken == 'ELSE_CODE':
                     print("ENTER <ELSE STMT>")
-                    lex()
-                    stmt()
+                    block()
                     print("EXIT <ELSE STMT>")
-                else:
-                    stmt()
     print("EXIT <IF STMT>")
 def for_stmt():
     print("Enter <FOR STATMENT>")
@@ -257,8 +292,7 @@ def for_stmt():
         lex()
     if nextToken != 'right_paranthesis':
         error()
-    lex()
-    stmt()
+    block()
     print("End <for statement>") 
 
 def while_stmt():
@@ -275,30 +309,53 @@ def while_stmt():
             if nextToken != 'right_paranthesis':
                 error()
             else:
-                lex()
-                stmt()
+                block()
     print("Exit <while statement>")
-
+def switch_stmt():
+    print('Enter <switch statement>')
+    if nextToken != 'SWITCH_CODE':
+        error()
+    else:
+        lex()
+        if nextToken != 'left_paranthesis':
+            error()
+        lex()
+        if nextToken != 'right_paranthesis':
+            error()
+        lex()
+        if nextToken != 'left_curly':
+            error()
+        lex()
+        if nextToken == 'CASE_CODE' or nextToken == 'DEFAULT_CODE':
+            stmt()
+        else:
+            if nextToken != 'right_curly':
+                error()
+        print('END <switch statement>')
+def return_stmt():
+    print("Enter <Return statement>")
+    if nextToken != 'RETURN_CODE':
+        error()
+    lex()
+    expr()
+    print('END <return statement>')
 def program():
     print('Enter <Program>')
     lex()
     if nextToken != 'VOID_CODE':
         error()
+    lex()
+    if nextToken != 'MAIN_CODE':
+        error()
+    lex()
+    if nextToken != 'left_paranthesis':
+        error()
+    lex()
+    if nextToken != 'right_paranthesis':
+        error()
     else:
-        lex()
-        if nextToken != 'MAIN_CODE':
-            error()
-        else:
-            lex()
-            if nextToken != 'left_paranthesis':
-                error()
-            else:
-                lex()
-                if nextToken != 'right_paranthesis':
-                  error()
-                else:
-                    stmt()
-    print('Exit <Program>')                 
+        block()
+    print('END <Program>')                 
 
         
 
@@ -306,3 +363,4 @@ def program():
     
 
 program()
+print(parsed_array)
