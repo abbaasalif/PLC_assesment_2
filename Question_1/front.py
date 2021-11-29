@@ -135,6 +135,7 @@ def lex():
         nextToken = None
 
 def stmt():
+    lex()
     if nextToken == 'INT_CODE' or nextToken == 'FLOAT_CODE' or nextToken == 'DOUBLE_CODE' or nextToken=='IDENTIFIER':
         assignment_stmt()
     elif nextToken == 'WHILE_CODE':
@@ -149,20 +150,18 @@ def stmt():
         forEach_stmt()
     elif nextToken == 'DO_CODE':
         do_while_stmt()
-    lex()
+    elif nextToken == 'left_curly':
+        block()
 def block():
     print("Start <block>")
-    lex()
     if nextToken != 'left_curly':
         error()
-    lex()
+    while nextToken != 'right_curly' and parsed_array:
+        stmt()
     if nextToken == 'right_curly':
         print("END <block>")
     else:
-        while nextToken != 'right_curly':
-            stmt()
-        if nextToken == 'right_curly':
-            print("End <block>")
+        error()
         
  
 def assignment_stmt():
@@ -172,20 +171,13 @@ def assignment_stmt():
         if nextToken != 'IDENTIFIER':
             error()
         lex()
-        if nextToken == 'delimiter':
-            print('END <assignment statement>')
-            return
         if nextToken != 'assign_op':
             error()
         lex()
         expr()
-        # if nextToken == 'IDENTIFIER' or nextToken == 'INTEGER' or nextToken == 'FLOAT': 
-        #     lex()
         if nextToken != 'delimiter':
             error()
         print('End <assignement statement>')
-        # else:
-        #     error()
     elif nextToken == 'IDENTIFIER':
         lex()
         if nextToken != 'assign_op':
@@ -271,11 +263,11 @@ def if_stmt():
             if nextToken != 'right_paranthesis':
                 error()
             else:
-                block()
+                stmt()
                 lex()
                 if nextToken == 'ELSE_CODE':
                     print("ENTER <ELSE STMT>")
-                    block()
+                    stmt()
                     print("EXIT <ELSE STMT>")
     print("End <IF STMT>")
 def for_stmt():
@@ -298,7 +290,7 @@ def for_stmt():
         lex()
     if nextToken != 'right_paranthesis':
         error()
-    block()
+    stmt()
     print("End <for statement>") 
 def forEach_stmt():
     print("Enter <forEach statement>")
@@ -320,7 +312,7 @@ def forEach_stmt():
     if nextToken != 'right_paranthesis':
         error()
     else:
-        block()
+        stmt()
     print('End <forEach statement>')
 def while_stmt():
     print('Enter <while statement>')
@@ -336,7 +328,7 @@ def while_stmt():
             if nextToken != 'right_paranthesis':
                 error()
             else:
-                block()
+                stmt()
     print("End <while statement>")
 def switch_stmt():
     print('Enter <switch statement>')
@@ -370,7 +362,7 @@ def do_while_stmt():
     print('Enter <Do While Statement>')
     if nextToken != 'DO_CODE':
         error()
-    block()
+    stmt()
     lex()
     if nextToken != "WHILE_CODE":
         error()
@@ -400,7 +392,7 @@ def program():
     if nextToken != 'right_paranthesis':
         error()
     else:
-        block()
+        stmt()
     print('END <Program>')                 
 
 #starts cheking the syntax of the program        

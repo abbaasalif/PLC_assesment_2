@@ -1,10 +1,12 @@
 void main (){
-    int a;
-    int b;
-    do{
+   int b = 10;
+   int c=5;
+   while(b==c){
 
-    }while(a==b);
-}
-    
+   }
+   if(b==c){
+
+   }
+}  
 
 
