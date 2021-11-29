@@ -171,20 +171,21 @@ def assignment_stmt():
         if nextToken != 'IDENTIFIER':
             error()
         lex()
-        if nextToken != 'assign_op':
+        if nextToken == 'assign_op':
+            lex()
+            expr()
+            if nextToken != 'delimiter':
+                error()
+            print('End <assignement statement>')
+        elif nextToken == "delimiter":
+            print('END <assignment statement>')
+        else:
             error()
-        lex()
-        expr()
-        if nextToken != 'delimiter':
-            error()
-        print('End <assignement statement>')
     elif nextToken == 'IDENTIFIER':
         lex()
-        if nextToken != 'assign_op':
-            error()
-        lex()
-        if nextToken == 'IDENTIFIER' or nextToken == 'INTEGER' or nextToken == 'FLOAT': 
+        if nextToken == 'assign_op':
             lex()
+            expr()
             if nextToken != 'delimiter':
                 error()
             print('End <assignement statement>')
