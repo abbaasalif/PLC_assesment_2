@@ -152,6 +152,8 @@ def stmt():
         do_while_stmt()
     elif nextToken == 'left_curly':
         block()
+    elif nextToken == 'SWITCH_CODE':
+        switch_stmt()
 def block():
     print("Start <block>")
     if nextToken != 'left_curly':
@@ -177,6 +179,7 @@ def assignment_stmt():
             if nextToken != 'delimiter':
                 error()
             print('End <assignement statement>')
+            return
         elif nextToken == "delimiter":
             print('END <assignment statement>')
         else:
@@ -340,13 +343,19 @@ def switch_stmt():
         if nextToken != 'left_paranthesis':
             error()
         lex()
+        expr()
         if nextToken != 'right_paranthesis':
             error()
         lex()
         if nextToken != 'left_curly':
             error()
+        
         lex()
         if nextToken == 'CASE_CODE' or nextToken == 'DEFAULT_CODE':
+            lex()
+            expr()
+            if nextToken != 'EACH':
+                error()
             stmt()
         else:
             if nextToken != 'right_curly':
@@ -373,6 +382,7 @@ def do_while_stmt():
     lex()
     bool_expr()
     if nextToken != 'right_paranthesis':
+        print(nextToken)
         error()
     lex()
     if nextToken != 'delimiter':
