@@ -210,7 +210,7 @@ def term():
     print("Enter <term>")
     factor()
 
-    while(nextToken == 'mult_op' or nextToken == 'div_op' or nextToken == 'mod_op'):
+    while(nextToken == 'mul_op' or nextToken == 'div_op' or nextToken == 'mod_op'):
         lex()
         factor()
     print("Exit <term>")
